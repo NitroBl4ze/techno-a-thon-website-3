@@ -1,6 +1,8 @@
 import CountdownTimer from '@/components/CountdownTimer';
-import logoImage from '../assets/engg-header.png';
-import bgImage from '../assets/attachment_2.jpg'; // Make sure to move your uploaded image to src/assets and rename as needed
+import logoImage from '@/assets/engg-header.png';
+import { useState } from 'react';
+import { Play, Pause, RefreshCw } from 'lucide-react';
+import bgImage from '@/assets/attachment_2.jpg';
 
 declare module '*.png' {
   const value: string;
@@ -10,6 +12,17 @@ declare module '*.jpg' {
 }
 
 const MainEvent = () => {
+  const [isTimerPaused, setIsTimerPaused] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+
+  const handlePausePlay = () => {
+    setIsTimerPaused(prev => !prev);
+  };
+
+  const handleReset = () => {
+    setResetKey(prev => prev + 1);
+  };
+
   return (
     <div className="min-h-screen w-full flex flex-col overflow-hidden relative">
       {/* Background image with 50% opacity */}
@@ -46,26 +59,25 @@ const MainEvent = () => {
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col lg:flex-row px-3 sm:px-4 lg:px-6 pb-4 min-h-0">
-          {/* Left Side - Video and Timer (both large and filling space) */}
-          <div className="w-full lg:w-1/2 mb-4 lg:mb-0 lg:pr-6 flex flex-col items-center justify-center h-full">
-            <video
-              className="w-full max-w-2xl aspect-video object-cover rounded-2xl shadow-2xl mb-8"
-              autoPlay
-              loop
-              muted
-              playsInline
-            >
-              <source src="src/assets/hackathon-video.mp4.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-            <div className="w-full flex justify-center">
-              <CountdownTimer />
+          {/* Left Side - Video */}
+          <div className="w-full lg:w-1/2 mb-4 lg:mb-0 lg:pr-6">
+            <div className="bg-black/30 border-2 border-white/20 rounded-lg overflow-hidden shadow-2xl h-48 sm:h-64 lg:h-80 xl:h-96">
+              <video
+                className="w-full h-full object-cover"
+                autoPlay 
+                loop 
+                muted
+                playsInline
+              >
+                <source src="/hackathon-video.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
             </div>
           </div>
 
           {/* Right Side - Schedule */}
           <div className="w-full lg:w-1/2 lg:pl-4">
-            <div className="bg-black/30 border border-white/20 rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row">
+            <div className="bg-black/30 border border-white/20 rounded-lg p-3 sm:p-4 overflow-y-auto h-48 sm:h-64 lg:h-80 xl:h-96 flex flex-col sm:flex-row">
               {/* Day 01 Column */}
               <div className="flex-1 p-2 border-r border-white/20 pr-4">
                 <div className="text-center text-arcade-purple font-bold text-base sm:text-lg mb-3 bg-white/90 rounded py-1">DAY 01</div>
@@ -99,6 +111,27 @@ const MainEvent = () => {
             </div>
           </div>
         </div>
+      </div>
+      
+      {/* Timer Controls */}
+      <div className="fixed bottom-4 right-4 z-50 flex space-x-4">
+        <button 
+          onClick={handlePausePlay}
+          className="bg-black/60 backdrop-blur-sm p-3 rounded-lg text-white/80 hover:text-white transition-colors"
+        >
+          {isTimerPaused ? <Play size={24} /> : <Pause size={24} />}
+        </button>
+        <button 
+          onClick={handleReset}
+          className="bg-black/60 backdrop-blur-sm p-3 rounded-lg text-white/80 hover:text-white transition-colors"
+        >
+          <RefreshCw size={24} />
+        </button>
+      </div>
+
+      {/* Bottom - Countdown Timer */}
+      <div className="fixed bottom-4 left-4 z-50">
+        <CountdownTimer isPaused={isTimerPaused} resetKey={resetKey} />
       </div>
     </div>
   );
